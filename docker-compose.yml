@@ -1,0 +1,62 @@
+version: '3.5'
+
+# Services
+services:
+
+  # DATABASE Mongo DB
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=rootuser
+      - MONGO_INITDB_ROOT_PASSWORD=rootpass
+    volumes:
+      - mongodb-data    
+    networks:
+      - backend                 
+  
+  # Mongo Express DB Manager
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo-express
+    depends_on:
+      - mongodb
+    ports:
+      - 8081:8081
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=rootuser
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=rootpass
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+    networks:
+      - backend        
+  
+  # Node
+  app:
+    container_name: app
+    depends_on:
+      - mongo-express
+    build:
+      context: ./    
+      dockerfile: Dockerfile
+    tty: true
+    restart: 'always'
+    working_dir: /var/src/app
+    volumes:
+      - ./:/var/src/app
+    command: npm run dev
+    ports:
+      - 3000:3000          
+    networks:
+      - backend
+
+# Network
+networks:
+  backend:
+    driver: bridge    
+
+# Volume
+volumes:
+  mongodb-data:
+    driver: local
