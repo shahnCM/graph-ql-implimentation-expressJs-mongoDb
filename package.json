@@ -8,7 +8,7 @@
         "dev": "nodemon server.js 0.0.0.0:3000"
     },
     "author": "Mahir",
-    "license": "ISC",
+    "license": "MIT",
     "dependencies": {
         "apollo-server-express": "^2.23.0",
         "bcryptjs": "^2.4.3",
